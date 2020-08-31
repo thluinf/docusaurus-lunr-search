@@ -49,6 +49,7 @@
     "lunr": "^2.3.8",
     "lunr-languages": "^1.4.0",
     "minimatch": "^3.0.4",
+    "nodejieba": "^2.4.1",
     "object-assign": "^4.1.1",
     "rehype-parse": "^7.0.1",
     "to-vfile": "^6.1.0",

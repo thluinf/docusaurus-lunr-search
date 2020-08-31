@@ -2,6 +2,7 @@ const path = require('path')
 const fs = require('fs')
 const lunr = require('lunr')
 const minimatch = require('minimatch')
+const nodejieba = require('nodejieba')
 
 /**
  * Based on code from https://github.com/cmfcmf/docusaurus-search-local/
@@ -20,8 +21,21 @@ function generateLunrClientJS(outDir, language = "en") {
         require("lunr-languages/lunr.stemmer.support")(lunr);
         lunrClient += 'require("lunr-languages/lunr.stemmer.support")(lunr);\n';
         if (Array.isArray(language)) {
+            // handle zh by local plugin
+            if (language.indexOf('zh') !== -1) {
+                const userDict = path.join(__dirname, 'dict.txt.big');
+                try {
+                    if (fs.existsSync(userDict)) {
+                        nodejieba.load({ userDict });
+                    } else {
+                        nodejieba.load();
+                    }
+                } catch (e) {}
+                require(path.join(__dirname, 'lunr.zh.js'))(lunr);
+                lunrClient += 'require("docusaurus-lunr-search/src/lunr.zh")(lunr);\n';
+            }
             language
-                .filter(code => code !== "en")
+                .filter(code => code !== "en" && code !== 'zh')
                 .forEach(code => {
                     require(`lunr-languages/lunr.${code}`)(lunr);
                     lunrClient += `require("lunr-languages/lunr.${code}")(lunr);\n`;

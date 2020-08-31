@@ -49,6 +49,9 @@ module.exports = function (context, options) {
       const lunrBuilder = lunr(function (builder) {
         if (languages) {
           this.use(languages)
+          if (options.languages.indexOf('zh') !== -1) {
+            this.tokenizer = lunr.zh.tokenizer;
+          }
         } 
         this.ref('id')
         this.field('title', { boost: 200 })
